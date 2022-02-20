@@ -1,0 +1,49 @@
+{% extends "base_menu.html" %}
+{% load static %}
+{% block head %}
+
+<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.3.0/bootbox.js"></script>
+{% endblock %}
+{% block content %}
+
+{% url 'tasks:task_create_page' as task_create_page %}
+
+{% if user.is_authenticated %}
+<div style="float:right">
+<a href="{{task_create_page}}" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-plus"></span> Create a new Task </a>
+</div>
+{% endif %}
+
+
+<br clear="all"/>
+<table id="tasklist" class="table table-striped table-bordered table-sm display" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Description</th>
+        {% if user.is_authenticated %}
+        <th>Edit</th>
+        <th>Delete</th>
+        {% endif %}
+    </tr>
+    </thead>
+</table>
+
+<script type="text/javascript">
+var page_context = {
+    taskListApi : "{% url 'tasks:task-list' %}",
+    taskDeleteApi : "{% url 'tasks:task-delete' 0 %}",
+    taskDetailPage : "{% url 'tasks:task_detail' 0 %}",
+    taskListPage : "{% url 'tasks:task_list_page' %}",
+    isUserAuthenticated : '{{ user.is_authenticated }}'==='True',
+    userId : '{{user.id}}',
+};
+page_context.taskDetailPage = page_context.taskDetailPage.substring(0, page_context.taskDetailPage.length - 1);
+page_context.taskDeleteApi = page_context.taskDeleteApi.substring(0, page_context.taskDeleteApi.length - 1);
+</script>
+<script src="{% static '/task_list.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base_menu.html" %}
+{% load static %}
+{% block content %}
+
+<form id="task_form">
+    <div class="form-group">
+        <label for="title">Title :</label>
+        <input type="text" class="form-control" placeholder="Enter title" id="title">
+    </div>
+
+    <div class="form-group">
+        <label for="status">Status :</label>
+
+        <select class="form-control" id="status">
+            {% for k, v in status_choices_dict.items %}
+                <option value="{{k}}">{{v}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="description">Description :</label>
+        <textarea class="form-control" rows="5" id="description" placeholder="Enter Description" ></textarea>
+    </div>
+
+    <div class="col text-center">
+    <input id="createButton" type="submit" class="btn btn-info btn-lg" value="Create" style="display: none;" />
+    <input id="updateButton" type="submit" class="btn btn-info btn-lg" value="Update" style="display: none;" />
+    </div>
+</form>
+
+
+<script>
+{% if pk %}
+    page_context = {
+        "pk" : {{ pk }},
+        "taskRetrieveApi" : "{% url 'tasks:task-retrieve' pk %}",
+        "taskUpdateApi" : "{% url 'tasks:task-update' pk %}",
+        "taskListPage" : "{% url 'tasks:task_list_page' %}",
+    }
+{% else %}
+    page_context = {
+        "taskCreateApi" : "{% url 'tasks:task-create' %}",
+        "taskListPage" : "{% url 'tasks:task_list_page' %}",
+    }
+//    page_context.taskUpdateApi = page_context.taskUpdateApi.substring(0, page_context.taskUpdateApi.length - 1);
+{% endif %}
+</script>
+<script src="{% static '/task_detail.js' %}"></script>
+
+{% endblock %}
