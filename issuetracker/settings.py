@@ -91,11 +91,14 @@ WSGI_APPLICATION = 'issuetracker.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': os.path.join(PROJECT_DIR, 'mysql.cnf'),
-        },
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "issue_manager",
+        "USER": "issue_manager",
+        "PASSWORD": "123456",
+        "HOST": "localhost",
+        "default-character-set": "utf8",
+        "PORT": "5432",
     }
 }
 
