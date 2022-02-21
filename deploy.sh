@@ -1,5 +1,5 @@
 #!/bin/sh
-current_time=$(date "+%Y.%m.%d-%H.%M.%S")
+current_time=$(date "+%Y%m%d_%H%M%S")
 echo "Current Time : $current_time"
 
 rm -rf venv
