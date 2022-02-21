@@ -7,7 +7,7 @@ python3.6 -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py collectstatic
+python manage.py collectstatic --noinput
 
 new_fileName=$current_time
 echo "New FileName: " "$new_fileName"
