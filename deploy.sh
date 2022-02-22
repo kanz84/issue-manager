@@ -16,9 +16,5 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py collectstatic --noinput
 
-sudo chgrp -R www-data ~/artifacts/issue-manager-pro/$new_fileName
-sudo find ~/artifacts/issue-manager-pro/$new_fileName -type d -exec chmod g+rx {} +
-sudo find ~/artifacts/issue-manager-pro/$new_fileName -type f -exec chmod g+r {} +
-
 rm ~/artifacts/issue-manager-pro/current
 ln -s ~/artifacts/issue-manager-pro/$new_fileName ~/artifacts/issue-manager-pro/current
