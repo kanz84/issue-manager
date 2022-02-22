@@ -1,9 +1,3 @@
-from django.urls import path
-from django.views.generic import TemplateView
+app_name = "home"
 
-from . import views
-
-app_name = 'home'
-
-urlpatterns = [
-]
+urlpatterns = []
