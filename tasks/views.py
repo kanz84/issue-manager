@@ -3,15 +3,15 @@ import logging
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.mixins import (CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin,
                                    DestroyModelMixin)
-from rest_framework.permissions import IsAuthenticated, AllowAny, DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.viewsets import GenericViewSet
 
-from tasks.domain.CsrfExempt import CsrfExemptSessionAuthentication
-from tasks.domain.Owner import IsOwner
-from tasks.domain import TaskStatus
+from issuetracker.utils.authentication import CsrfExemptSessionAuthentication
+from issuetracker.utils.view_utils import IsOwner
+from tasks.enums import TaskStatusEnum
 from tasks.models import Task
 from tasks.serializers import TaskSerializer
 
@@ -40,7 +40,7 @@ class TaskListCreateViewSet(GenericViewSet, CreateModelMixin, ListModelMixin):
 def task_detail_page(request, pk):
     return render(request, 'tasks/task_detail.html', {
         'pk': pk,
-        'status_choices_dict': TaskStatus.STATUS_CHOICES_DICT
+        'status_choices_dict': TaskStatusEnum.to_dict()
     })
 
 
@@ -50,5 +50,5 @@ def task_list_page(request):
 
 def task_create_page(request):
     return render(request, 'tasks/task_detail.html', {
-        'status_choices_dict': TaskStatus.STATUS_CHOICES_DICT
+        'status_choices_dict': TaskStatusEnum.to_dict()
     })
