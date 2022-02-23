@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12.7
+        env:
+          POSTGRES_USER: issue_manager
+          POSTGRES_PASSWORD: 123456
+          POSTGRES_DB: issue_manager
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
+
+      - name: psycopg2 prerequisites
+        run: sudo apt-get install libpq-dev
+
+      - name: Setup environment
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python manage.py collectstatic -c
+
+      - name: Chack migrations
+        run: |
+          python manage.py makemigrations --check --dry-run
+
+      - name: Tests
+        run: |
+          python manage.py test
+
+      - name: Lint
+        run: |
+          pylint
+
+
+      - name: done
+        run: echo Done
