@@ -185,13 +185,13 @@ def select_env():
 ENV = select_env()
 
 if ENV == env_pro:
-    pass
+    from issuetracker.setting.settings_pro import *
 elif ENV == env_stage:
-    pass
+    from issuetracker.setting.settings_stage import *
 elif ENV == env_ci:
-    pass
+    from issuetracker.setting.settings_ci import *
 elif ENV == env_dev:
-    pass
+    from issuetracker.setting.settings_dev import *
 else:
     raise Exception("env is incorrect!")
 
