@@ -10,7 +10,7 @@ from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.viewsets import GenericViewSet
 
 from issuetracker.utils.authentication import CsrfExemptSessionAuthentication
-from issuetracker.utils.view_utils import IsOwner
+from issuetracker.utils.util_views import IsOwner
 from tasks.enums import TaskStatusEnum
 from tasks.models import Task
 from tasks.serializers import TaskSerializer

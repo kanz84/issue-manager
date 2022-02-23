@@ -1,4 +1,4 @@
-from issuetracker.utils.enum import StrEnum
+from issuetracker.utils.util_enum import StrEnum
 
 
 class TaskStatusEnum(StrEnum):
