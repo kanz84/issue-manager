@@ -45,9 +45,9 @@ jobs:
         run: |
           python manage.py test
 
-      - name: Lint
-        run: |
-          pylint ./home
+#      - name: Lint
+#        run: |
+#          pylint ./home
 
 
       - name: done
