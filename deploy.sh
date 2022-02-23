@@ -9,6 +9,9 @@ mkdir ~/artifacts/issue-manager-pro/$new_fileName
 cp -r ./*  ~/artifacts/issue-manager-pro/$new_fileName/
 
 cd ~/artifacts/issue-manager-pro/$new_fileName/
+
+cp ../local_settings.py ./
+
 python3.6 -m venv venv
 . venv/bin/activate
 python -m pip install --upgrade pip
