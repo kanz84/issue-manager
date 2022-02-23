@@ -33,9 +33,6 @@ class TaskListCreateViewSet(GenericViewSet, CreateModelMixin, ListModelMixin):
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
 
 def task_detail_page(request, pk):
     return render(request, 'tasks/task_detail.html', {
