@@ -1,14 +1,12 @@
 #!/bin/sh
 current_time=$(date "+%Y%m%d_%H%M%S")
-echo "Current Time : $current_time"
 
 new_fileName=deploy_$current_time
-echo "New FileName: " "$new_fileName"
 
-echo "Creating dir " "~/artifacts/issue-manager-pro/$new_fileName"
+echo "Creating new artifact dir: ~/artifacts/issue-manager-pro/$new_fileName"
 mkdir ~/artifacts/issue-manager-pro/$new_fileName
 
-echo "Copying project to " "~/artifacts/issue-manager-pro/$new_fileName"
+echo "Copying project to ~/artifacts/issue-manager-pro/$new_fileName"
 cp -r ./*  ~/artifacts/issue-manager-pro/$new_fileName/
 
 cd ~/artifacts/issue-manager-pro/$new_fileName/
