@@ -57,11 +57,6 @@ Now, you can view the application with this url [http://localhost:8000/](http://
 
 
 
-### Explanations
-Because of time limitation, I couldn't use pagination in the page which shows list of tasks.
-
-
-
 ### Built With
 
 * [Python](https://python.org)
