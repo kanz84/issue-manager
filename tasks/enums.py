@@ -1,7 +1,7 @@
-from issuetracker.utils.util_enum import StrEnum
+from issuetracker.utils.util_enum import StringEnum
 
 
-class TaskStatusEnum(StrEnum):
+class TaskStatusEnum(StringEnum):
     NOT_STARTED = "NS", "Not Started"
     IN_PROGRESS = "IP", "In Progress"
     DONE = "D", "Done"

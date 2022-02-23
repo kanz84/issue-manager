@@ -21,7 +21,7 @@ class BaseEnum:
         return "\n".join(items)
 
 
-class StrEnum(str, BaseEnum, enum.Enum):
+class StringEnum(str, BaseEnum, enum.Enum):
     def __new__(cls, value, *args):
         if not isinstance(value, (str, enum.auto)):
             raise TypeError(f"Value must be string: {repr(value)} is a {type(value)}")
