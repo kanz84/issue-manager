@@ -11,6 +11,7 @@ faker = Factory.create()
 
 
 class UserFactory(DjangoModelFactory):
+    # UserFactory for user model
     username = factory.Sequence(lambda n: f"username_{n}")
     email = faker.email()
     is_staff = True
