@@ -1,14 +1,10 @@
-import logging
-
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
-from .factories import UserFactory, TaskFactory
-from ..enums import TaskStatusEnum
-from ..models import Task
-
-logger = logging.getLogger(__name__)
+from tasks.enums import TaskStatusEnum
+from tasks.models import Task
+from tasks.tests.factories import UserFactory, TaskFactory
 
 
 class TaskViewSetTestCase(TestCase):
@@ -17,18 +13,13 @@ class TaskViewSetTestCase(TestCase):
         self.user.set_password("test")
         self.user.save()
 
-        result = self.client.login(
-            password="test",
-            username="test",
-        )
-        logger.info("login result is :%s", result)
+        self.client.login(password="test", username="test")
 
     def test_get_list(self):
         owner = UserFactory()
         tasks = [TaskFactory(owner=owner) for i in range(0, 3)]
 
         list_url = reverse("tasks:task-list")
-        logger.info("list_url is:%s", list_url)
 
         response = self.client.get(list_url)
 
@@ -62,11 +53,7 @@ class TaskViewSetTestCase(TestCase):
         user.set_password("test_su")
         user.save()
 
-        result = self.client.login(
-            password="test_su",
-            username="test_su",
-        )
-        logger.info("login result is :%s", result)
+        self.client.login(password="test_su", username="test_su")
 
         response = self.client.post(create_url, data=data, content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
