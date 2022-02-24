@@ -1,3 +1,7 @@
+# pylint: disable=wildcard-import
+# pylint: disable=wrong-import-position
+# pylint: disable=unused-wildcard-import
+
 """
 Django settings for issuetracker project.
 
@@ -100,6 +104,13 @@ DATABASES = {
         "PORT": "5432",
     }
 }
+if IS_TEST:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
