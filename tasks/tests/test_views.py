@@ -1,67 +1,109 @@
-from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from tasks.enums import TaskStatusEnum
 from tasks.models import Task
 from tasks.tests.factories import UserFactory, TaskFactory
 
 
-class TaskViewSetTestCase(TestCase):
+class TaskViewSetTestCase(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = user = UserFactory()
+        cls.user_other = user_other = UserFactory()
+
+        cls.task = TaskFactory(owner=user)
+        TaskFactory(owner=user)
+        TaskFactory(owner=user)
+        cls.task_other = TaskFactory(owner=user_other)
+
     def setUp(self):
-        self.user = UserFactory(username="test", password="test", email="testuser@example.com", is_staff=True)
-        self.user.set_password("test")
-        self.user.save()
+        self.client.force_authenticate(user=self.user)
 
-        self.client.login(password="test", username="test")
+    def test_list(self):
 
-    def test_get_list(self):
-        owner = UserFactory()
-        tasks = [TaskFactory(owner=owner) for i in range(0, 3)]
+        res = self.client.get(reverse("tasks:task-list"))
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
 
-        list_url = reverse("tasks:task-list")
+        res_data = {task["id"]: task for task in res.data}
+        self.assertEqual(3, len(res_data))
+        self.assertEqual(res_data.keys(), {task.id for task in Task.objects.filter(owner=self.user).all()})
 
-        response = self.client.get(list_url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(set(task["id"] for task in response.data), set(task.id for task in tasks))
+        # validate schema
+        res_data1 = res_data[self.task.id]
+        self.assertEqual(self.task.title, res_data1["title"])
+        self.assertEqual(self.task.status, res_data1["status"])
+        self.assertEqual(self.task.description, res_data1["description"])
+        self.assertEqual(self.task.status_str(), res_data1["status_str"])
+        self.assertEqual(self.task.owner.id, res_data1["owner_id"])
 
     def test_retrieve(self):
-        task = TaskFactory(owner=self.user)
-        retrieve_url = reverse("tasks:task-retrieve", kwargs={"pk": task.id})
-        response = self.client.get(retrieve_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["title"], task.title)
+        res = self.client.get(reverse("tasks:task-detail", kwargs={"pk": self.task.id}))
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+
+        self.assertEqual(self.task.id, res.data["id"])
+        self.assertEqual(self.task.title, res.data["title"])
+        self.assertEqual(self.task.status, res.data["status"])
+        self.assertEqual(self.task.description, res.data["description"])
+        self.assertEqual(self.task.status_str(), res.data["status_str"])
+        self.assertEqual(self.task.owner.id, res.data["owner_id"])
+
+    def test_retrieve_wrong_owner(self):
+        res = self.client.get(reverse("tasks:task-detail", kwargs={"pk": self.task_other.id}))
+        self.assertEqual(status.HTTP_404_NOT_FOUND, res.status_code)
 
     def test_update(self):
         task = TaskFactory(owner=self.user)
-        update_url = reverse("tasks:task-update", kwargs={"pk": task.id})
         data = {"title": "New title", "description": "New description"}
-        response = self.client.put(update_url, data=data, content_type="application/json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["title"], data["title"])
-        self.assertEqual(response.data["description"], data["description"])
+        res = self.client.put(reverse("tasks:task-detail", kwargs={"pk": task.id}), data=data)
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+
+        self.assertEqual(data["title"], res.data["title"])
+        self.assertEqual(data["description"], res.data["description"])
+
+        task_ = Task.objects.get(pk=task.id)
+
+        self.assertEqual(data["title"], task_.title)
+        self.assertEqual(data["description"], task_.description)
+
+    def test_update_wrong_owner(self):
+        res = self.client.put(reverse("tasks:task-detail", kwargs={"pk": self.task_other.id}), data={})
+        self.assertEqual(status.HTTP_404_NOT_FOUND, res.status_code)
 
     def test_create(self):
-        self.assertEqual(Task.objects.count(), 0)
-        create_url = reverse("tasks:task-create")
-        data = {"title": "New title", "status": TaskStatusEnum.NOT_STARTED, "description": "New description"}
+        data = {
+            "title": "New title",
+            "status": TaskStatusEnum.NOT_STARTED,
+            "description": "New description",
+        }
 
-        user = UserFactory(
-            username="test_su", password="test_su", email="test_suuser@example.com", is_staff=True, is_superuser=True
-        )
-        user.set_password("test_su")
-        user.save()
+        res = self.client.post(reverse("tasks:task-list"), data=data)
+        self.assertEqual(status.HTTP_201_CREATED, res.status_code)
 
-        self.client.login(password="test_su", username="test_su")
+        self.assertEqual(data["title"], res.data["title"])
+        self.assertEqual(data["description"], res.data["description"])
 
-        response = self.client.post(create_url, data=data, content_type="application/json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["title"], data["title"])
-        self.assertEqual(response.data["description"], data["description"])
+        task_ = Task.objects.get(pk=res.data["id"])
+
+        self.assertEqual(data["title"], task_.title)
+        self.assertEqual(data["description"], task_.description)
+        self.assertEqual(self.user.id, task_.owner.id)
+
+    def test_create_required_fields(self):
+        res = self.client.post(reverse("tasks:task-list"), data={})
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
+
+        self.assertEqual("required", res.data["title"][0].code)
+        self.assertEqual("required", res.data["description"][0].code)
 
     def test_delete(self):
         task = TaskFactory(owner=self.user)
-        delete_url = reverse("tasks:task-delete", kwargs={"pk": task.id})
-        response = self.client.delete(delete_url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        res = self.client.delete(reverse("tasks:task-detail", kwargs={"pk": task.id}))
+        self.assertEqual(status.HTTP_204_NO_CONTENT, res.status_code)
+
+        self.assertFalse(Task.objects.filter(pk=task.id).exists())
+
+    def test_delete_wrong_owner(self):
+        res = self.client.delete(reverse("tasks:task-detail", kwargs={"pk": self.task_other.id}))
+        self.assertEqual(status.HTTP_404_NOT_FOUND, res.status_code)

@@ -1,4 +1,6 @@
+import factory
 from django.contrib.auth.models import User
+from factory import SubFactory
 from factory.django import DjangoModelFactory
 from faker import Factory
 
@@ -9,7 +11,7 @@ faker = Factory.create()
 
 
 class UserFactory(DjangoModelFactory):
-    username = faker.name()
+    username = factory.Sequence(lambda n: f"username_{n}")
     email = faker.email()
     is_staff = True
 
@@ -18,14 +20,10 @@ class UserFactory(DjangoModelFactory):
 
 
 class TaskFactory(DjangoModelFactory):
-    def __init__(self, owner):
-        self.owner = owner
+    owner = SubFactory(UserFactory)
     title = faker.word()
     status = TaskStatusEnum.NOT_STARTED
     description = faker.word()
-    owner = None
 
     class Meta:
         model = Task
-
-
