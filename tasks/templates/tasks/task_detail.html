@@ -34,13 +34,13 @@
 {% if pk %}
     page_context = {
         "pk" : {{ pk }},
-        "taskRetrieveApi" : "{% url 'tasks:task-retrieve' pk %}",
-        "taskUpdateApi" : "{% url 'tasks:task-update' pk %}",
+        "taskRetrieveApi" : "{% url 'tasks:task-detail' pk %}",
+        "taskUpdateApi" : "{% url 'tasks:task-detail' pk %}",
         "taskListPage" : "{% url 'tasks:task_list_page' %}",
     }
 {% else %}
     page_context = {
-        "taskCreateApi" : "{% url 'tasks:task-create' %}",
+        "taskCreateApi" : "{% url 'tasks:task-list' %}",
         "taskListPage" : "{% url 'tasks:task_list_page' %}",
     }
 //    page_context.taskUpdateApi = page_context.taskUpdateApi.substring(0, page_context.taskUpdateApi.length - 1);

@@ -35,7 +35,7 @@
 <script type="text/javascript">
 var page_context = {
     taskListApi : "{% url 'tasks:task-list' %}",
-    taskDeleteApi : "{% url 'tasks:task-delete' 0 %}",
+    taskDeleteApi : "{% url 'tasks:task-detail' 0 %}",
     taskDetailPage : "{% url 'tasks:task_detail' 0 %}",
     taskListPage : "{% url 'tasks:task_list_page' %}",
     isUserAuthenticated : '{{ user.is_authenticated }}'==='True',
