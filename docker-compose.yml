@@ -12,14 +12,19 @@ services:
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=issue_manager
       - POSTGRES_DATA=~/tmp/pgdata4
+
   web:
       build: .
       ports:
         - "8000:8000"
       command: >
-        sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+        sh -c "python manage.py migrate && python manage.py collectstatic -c && python manage.py runserver 0.0.0.0:8000"
       depends_on:
         - db
+      volumes:
+        - static_files:/static
+      environment:
+        - STATIC_FILES=~/tmp/static_files
 volumes:
   pgdata:
     driver: local
@@ -27,6 +32,13 @@ volumes:
       type: "none"
       o: "bind"
       device: ${POSTGRES_DATA}
+  static_files:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: ${STATIC_FILES}
+
 
 networks:
   default:
