@@ -13,18 +13,31 @@ services:
       - POSTGRES_DB=issue_manager
       - POSTGRES_DATA=~/tmp/pgdata4
 
-  web:
+  django:
       build: .
       ports:
         - "8000:8000"
       command: >
-        sh -c "python manage.py migrate && python manage.py collectstatic -c && python manage.py runserver 0.0.0.0:8000"
+        sh -c "python manage.py migrate && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
       depends_on:
         - db
       volumes:
         - static_files:/static
       environment:
         - STATIC_FILES=~/tmp/static_files
+
+  nginx:
+    image: nginx:1.19.8-alpine
+    depends_on:
+      - django
+    ports:
+      - "8081:8081"
+    volumes:
+      - static_files:/var/www/html/static
+      - ./nginx-conf.d/:/etc/nginx/conf.d
+
+
+
 volumes:
   pgdata:
     driver: local
