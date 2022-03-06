@@ -37,3 +37,4 @@ pylint-plugin-utils==0.7
 colorlog==6.6.0
 django-log-request-id==2.0.0
 django-request-logging==0.7.5
+gunicorn==20.1.0
