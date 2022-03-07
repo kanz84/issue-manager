@@ -23,8 +23,10 @@ services:
         - db
       volumes:
         - static_files:/static
+        - media_files:/media
       environment:
         - STATIC_FILES=~/tmp/static_files
+        - MEDIA_FILES=~/tmp/media_files
 
   nginx:
     image: nginx:1.19.8-alpine
@@ -34,6 +36,7 @@ services:
       - "8081:8081"
     volumes:
       - static_files:/var/www/html/static
+      - media_files:/var/www/html/media
       - ./nginx-conf.d/:/etc/nginx/conf.d
 
 
@@ -51,6 +54,12 @@ volumes:
       type: "none"
       o: "bind"
       device: ${STATIC_FILES}
+  media_files:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: ${MEDIA_FILES}
 
 
 networks:
