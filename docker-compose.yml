@@ -14,21 +14,21 @@ services:
       - POSTGRES_DATA=~/tmp/pgdata4
 
   django:
-      build: .
-      expose:
-        - 8000
-      command: >
-        sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 issuetracker.wsgi"
-      depends_on:
-        - db
-      volumes:
-        - static_files:/static
-        - media_files:/media
-        - logs_files:/logs_files
-      environment:
-        - STATIC_FILES=~/tmp/static_files
-        - MEDIA_FILES=~/tmp/media_files
-        - LOGS_FILES=~/tmp/logs_files
+    build: .
+    expose:
+      - 8000
+    command: >
+      sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 issuetracker.wsgi"
+    depends_on:
+      - db
+    volumes:
+      - static_files:/static
+      - media_files:/media
+      - logs_files:/logs_files
+    environment:
+      - STATIC_FILES=~/tmp/static_files
+      - MEDIA_FILES=~/tmp/media_files
+      - LOGS_FILES=~/tmp/logs_files
 
   nginx:
     image: nginx:1.19.8-alpine
