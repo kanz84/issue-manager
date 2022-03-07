@@ -1,3 +1,3 @@
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
-LOG_FILE_LOCATION = "/var/log/engine/issue-manager-pro.log"
+LOG_FILE_LOCATION = "/logs_files/issue-manager-pro.log"

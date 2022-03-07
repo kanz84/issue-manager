@@ -24,9 +24,11 @@ services:
       volumes:
         - static_files:/static
         - media_files:/media
+        - logs_files:/logs_files
       environment:
         - STATIC_FILES=~/tmp/static_files
         - MEDIA_FILES=~/tmp/media_files
+        - LOGS_FILES=~/tmp/logs_files
 
   nginx:
     image: nginx:1.19.8-alpine
@@ -60,6 +62,12 @@ volumes:
       type: "none"
       o: "bind"
       device: ${MEDIA_FILES}
+  logs_files:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: ${LOGS_FILES}
 
 
 networks:
