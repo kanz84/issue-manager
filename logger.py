@@ -17,7 +17,8 @@ def get_log_file_location():
 def is_in_run_mode():
     is_run_on_apache_ = len(sys.argv) > 0 and sys.argv[0] == "mod_wsgi"
     is_run_with_runserver = len(sys.argv) > 1 and sys.argv[1] == "runserver"
-    return is_run_on_apache_ or is_run_with_runserver
+    is_run_with_gunicorn = len(sys.argv) > 0 and "gunicorn" in sys.argv[0]
+    return is_run_on_apache_ or is_run_with_runserver or is_run_with_gunicorn
 
 
 is_run_on_apache = len(sys.argv) > 0 and sys.argv[0] == "mod_wsgi"
