@@ -23,3 +23,7 @@ urlpatterns += [
         },
     ),
 ]
+
+urlpatterns = [
+    path(r"issue-mgr/", include(urlpatterns)),
+]
