@@ -30,7 +30,7 @@ class TaskViewSetTestCase(APITestCase):
         self.assertEqual(3, len(res_data))
         self.assertEqual(res_data.keys(), {task.id for task in Task.objects.filter(owner=self.user).all()})
 
-        # validate schema
+        # validate schema ...
         res_data1 = res_data[self.task.id]
         self.assertEqual(self.task.title, res_data1["title"])
         self.assertEqual(self.task.status, res_data1["status"])
