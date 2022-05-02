@@ -46,7 +46,7 @@ services:
       - ./nginx-conf.d/:/etc/nginx/conf.d
     networks:
       - default
-      - nginx-orchestrator_nginx_network
+      - api-gateway_xnetwork
 
 
 volumes:
@@ -79,5 +79,5 @@ volumes:
 networks:
   default:
     driver: bridge
-  nginx-orchestrator_nginx_network:
+  api-gateway_xnetwork:
     external: true
