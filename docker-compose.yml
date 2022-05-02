@@ -28,9 +28,9 @@ services:
       - media_files:/media
       - logs_files:/logs_files
     environment:
-      - STATIC_FILES=~/tmp/static_files
-      - MEDIA_FILES=~/tmp/media_files
-      - LOGS_FILES=~/tmp/logs_files
+      - STATIC_FILES=${STATIC_FILES}
+      - MEDIA_FILES=${MEDIA_FILES}
+      - LOGS_FILES=${LOGS_FILES}
     networks:
       - default
 
