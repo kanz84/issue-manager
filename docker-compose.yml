@@ -11,7 +11,7 @@ services:
       - POSTGRES_USER=issue_manager
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=issue_manager
-      - POSTGRES_DATA=~/tmp/pgdata4
+      - POSTGRES_DATA=${POSTGRES_DATA}
     networks:
       - default
 
