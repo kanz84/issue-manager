@@ -1,7 +1,7 @@
 version: "3.3"
 
 services:
-  db:
+  issue_mgr_db:
     image: postgres:12.7
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -11,38 +11,31 @@ services:
       - POSTGRES_USER=issue_manager
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=issue_manager
-      - POSTGRES_DATA=${POSTGRES_DATA}
     networks:
       - default
 
-  django:
+  issue_mgr_app:
     build: .
     expose:
       - 8000
     command: >
       sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 issuetracker.wsgi"
     depends_on:
-      - db
+      - issue_mgr_db
     volumes:
-      - static_files:/static
-      - media_files:/media
-      - logs_files:/logs_files
-    environment:
-      - STATIC_FILES=${STATIC_FILES}
-      - MEDIA_FILES=${MEDIA_FILES}
-      - LOGS_FILES=${LOGS_FILES}
+      - issue_mgr_app_files:/workspace/files
     networks:
       - default
 
   issue_mgr_nginx:
     image: nginx:1.19.8-alpine
     depends_on:
-      - django
+      - issue_mgr_app
     ports:
       - "8081:8081"
     volumes:
-      - static_files:/var/www/html/static
-      - media_files:/var/www/html/media
+      - nginx_static:/var/www/html/static
+      - nginx_media:/var/www/html/media
       - ./nginx-conf.d/:/etc/nginx/conf.d
     networks:
       - default
@@ -55,25 +48,25 @@ volumes:
     driver_opts:
       type: "none"
       o: "bind"
-      device: ${POSTGRES_DATA}
-  static_files:
+      device: $HOME/artifacts/issue-manager/postgres/pgdata
+  issue_mgr_app_files:
     driver: local
     driver_opts:
       type: "none"
       o: "bind"
-      device: ${STATIC_FILES}
-  media_files:
+      device: $HOME/artifacts/issue-manager/app_files
+  nginx_static:
     driver: local
     driver_opts:
       type: "none"
       o: "bind"
-      device: ${MEDIA_FILES}
-  logs_files:
+      device: $HOME/artifacts/issue-manager/app_files/static
+  nginx_media:
     driver: local
     driver_opts:
       type: "none"
       o: "bind"
-      device: ${LOGS_FILES}
+      device: $HOME/artifacts/issue-manager/app_files/media
 
 
 networks:
