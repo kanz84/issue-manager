@@ -19,8 +19,11 @@ echo "Old docker containers removed"
 cp -r ./* "$backup_dir"
 echo "Project backed up to $backup_dir"
 
-cp --update ../local_settings.py ./
-echo "local_settings.py copied to project dir"
+local_settings="local_settings.py"
+if [ ! -f $local_settings ]; then
+    echo "env=\"PRO\"" > $local_settings
+    echo "local_settings.py created in project dir"
+fi
 
 docker-compose up -d --build
 echo "Docker image built"
