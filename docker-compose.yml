@@ -39,7 +39,7 @@ services:
       - ./nginx-conf.d/:/etc/nginx/conf.d
     networks:
       - default
-      - gateway_xnetwork
+      - project_xnetwork
 
 
 volumes:
@@ -72,5 +72,5 @@ volumes:
 networks:
   default:
     driver: bridge
-  gateway_xnetwork:
+  project_xnetwork:
     external: true
