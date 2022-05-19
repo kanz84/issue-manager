@@ -1,33 +1,31 @@
 #!/bin/sh
+
+cd ~/projects/issue-manager/project || exit
+echo "Changed dir to project dir"
+
 current_time=$(date "+%Y%m%d_%H%M%S")
+new_file_name=backup_$current_time
+backup_dir=$HOME/backups/issue-manager/$new_file_name/
 
-new_fileName=deploy_$current_time
+mkdir -p "$HOME/artifacts/issue-manager/postgres/pgdata"
+mkdir -p "$HOME/artifacts/issue-manager/app_files"
+mkdir -p "$HOME/artifacts/issue-manager/app_files/static"
+mkdir -p "$HOME/artifacts/issue-manager/app_files/media"
+mkdir -p "$backup_dir"
 
-echo "Creating new artifact dir: ~/artifacts/issue-manager-pro/$new_fileName"
-mkdir ~/artifacts/issue-manager-pro/$new_fileName
+docker-compose down && docker system prune -f && docker network prune -f
+echo "Old docker containers removed"
 
-echo "Copying project to ~/artifacts/issue-manager-pro/$new_fileName"
-cp -r ./*  ~/artifacts/issue-manager-pro/$new_fileName/
+cp -r ./* "$backup_dir"
+echo "Project backed up to $backup_dir"
 
-cd ~/artifacts/issue-manager-pro/$new_fileName/
+cp --update ../local_settings.py ./
+echo "local_settings.py copied to project dir"
 
-echo "Copying ../local_settings.py to artifact dir"
-cp ../local_settings.py ./
+docker-compose up -d --build
+echo "Docker image built"
 
-echo "Preparing venv"
-python3.6 -m venv venv
-. venv/bin/activate
-python -m pip install --upgrade pip
 
-echo "Installing requirements"
-pip install -r requirements.txt
-
-echo "Migrating DB"
-python manage.py migrate
-
-echo "Collecting static files"
-python manage.py collectstatic --noinput
-
-echo "Removing old link and creating new link to ~/artifacts/issue-manager-pro/$new_fileName"
-rm ~/artifacts/issue-manager-pro/current
-ln -s ~/artifacts/issue-manager-pro/$new_fileName ~/artifacts/issue-manager-pro/current
+#if [ $? -ne 0 ]; then
+#    <ran if unsuccessful> for example exit;
+#fi
