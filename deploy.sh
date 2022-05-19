@@ -21,7 +21,7 @@ if [ ! -f $local_settings ]; then
     echo "local_settings.py created in project dir"
 fi
 
-docker-compose up -d --build --suppress-orphan-warning
+docker-compose up -d --build --ignore-orphans
 echo "Docker image built"
 
 
