@@ -12,7 +12,7 @@ mkdir -p "$backup_dir"
 docker-compose down && docker system prune -f && docker network prune -f
 echo "Old docker containers removed"
 
-cp -r ./* "$backup_dir"
+tar -pczf "$backup_dir/project.tar.gz" --exclude .git .
 echo "Project backed up to $backup_dir"
 
 local_settings="local_settings.py"
