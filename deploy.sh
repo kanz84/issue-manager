@@ -1,15 +1,7 @@
 #!/bin/sh
 
-echo "current gitpull dir is $(pwd) "
-
-cd ~/projects/issue-manager/project || exit
-echo "Changed dir to project dir"
-
-echo "current gitpull dir is $(pwd) after cd"
-
 current_time=$(date "+%Y%m%d_%H%M%S")
-new_file_name=backup_$current_time
-backup_dir=$HOME/backups/issue-manager/$new_file_name/
+backup_dir=$HOME/backups/issue-manager/backup_$current_time/
 
 mkdir -p "$HOME/artifacts/issue-manager/postgres/pgdata"
 mkdir -p "$HOME/artifacts/issue-manager/app_files"
