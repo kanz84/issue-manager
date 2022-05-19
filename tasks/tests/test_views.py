@@ -6,8 +6,6 @@ from tasks.enums import TaskStatusEnum
 from tasks.models import Task
 from tasks.tests.factories import UserFactory, TaskFactory
 
-# reload ... ... ...
-
 
 class TaskViewSetTestCase(APITestCase):
     @classmethod
