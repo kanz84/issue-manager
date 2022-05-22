@@ -1,7 +1,5 @@
 #!/bin/sh
 
-export COMPOSE_PROJECT_NAME="issue_manager_project"
-
 current_time=$(date "+%Y%m%d_%H%M%S")
 backup_dir=$HOME/backups/issue-manager/backup_$current_time/
 
