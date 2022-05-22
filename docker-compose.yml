@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.5"
 
 services:
   issue_mgr_db:
@@ -39,7 +39,7 @@ services:
       - ./nginx-conf.d/:/etc/nginx/conf.d
     networks:
       - default
-      - project_xnetwork
+      - gateway_network
 
 
 volumes:
@@ -72,5 +72,5 @@ volumes:
 networks:
   default:
     driver: bridge
-  project_xnetwork:
+  gateway_network:
     external: true
