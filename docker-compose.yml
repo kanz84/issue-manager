@@ -12,7 +12,7 @@ services:
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=issue_manager
     networks:
-      - default
+      - issue_manager_network
 
   issue_mgr_app:
     build: .
@@ -25,7 +25,7 @@ services:
     volumes:
       - issue_mgr_app_files:/workspace/files
     networks:
-      - default
+      - issue_manager_network
 
   issue_mgr_nginx:
     image: nginx:1.19.8-alpine
@@ -38,7 +38,7 @@ services:
       - nginx_media:/var/www/html/media
       - ./nginx-conf.d/:/etc/nginx/conf.d
     networks:
-      - default
+      - issue_manager_network
       - gateway_network
 
 
@@ -70,7 +70,8 @@ volumes:
 
 
 networks:
-  default:
+  issue_manager_network:
+    name: "issue_manager_network"
     driver: bridge
   gateway_network:
     external: true
