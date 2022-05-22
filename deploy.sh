@@ -21,7 +21,7 @@ if [ ! -f $local_settings ]; then
     echo "local_settings.py created in project dir"
 fi
 
-docker-compose up -d --build
+docker-compose --profile issue_manager  up -d --build
 echo "Docker image built"
 
 
