@@ -34,6 +34,7 @@ services:
     ports:
       - "127.0.0.1:8081:8081"
     volumes:
+      - nginx_logs:/var/log/nginx
       - nginx_static:/var/www/html/static
       - nginx_media:/var/www/html/media
       - ./nginx-conf.d/:/etc/nginx/conf.d
@@ -67,6 +68,12 @@ volumes:
       type: "none"
       o: "bind"
       device: $HOME/artifacts/issue-manager/app_files/media
+  nginx_logs:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: $HOME/artifacts/issue-manager/nginx/logs
 
 
 networks:

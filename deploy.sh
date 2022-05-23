@@ -7,6 +7,7 @@ mkdir -p "$HOME/artifacts/issue-manager/postgres/pgdata"
 mkdir -p "$HOME/artifacts/issue-manager/app_files"
 mkdir -p "$HOME/artifacts/issue-manager/app_files/static"
 mkdir -p "$HOME/artifacts/issue-manager/app_files/media"
+mkdir -p "$HOME/artifacts/issue-manager/nginx/logs"
 mkdir -p "$backup_dir"
 
 docker-compose down && docker system prune -f && docker network prune -f
