@@ -16,6 +16,8 @@ RUN apk add --update --no-cache --virtual .tmp-build-deps alpine-sdk make gcc py
 RUN ping 8.8.8.8 -c 1
 RUN ping google.com -c 1
 
+RUN touch /dockerized_application.txt
+
 RUN mkdir workspace
 RUN mkdir /workspace/app
 RUN mkdir /workspace/files

@@ -104,13 +104,6 @@ DATABASES = {
         "PORT": "5432",
     }
 }
-if IS_TEST:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": ":memory:",
-        }
-    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -180,33 +173,66 @@ REST_FRAMEWORK = {
 
 
 env_pro = "PRO"
-env_stage = "STAGE"
 env_ci = "CI"
 env_dev = "DEV"
+env_dev_docker = "DEV-DOCKER"
+env_cmd = "CMD"
+env_cmd_docker = "CMD-DOCKER"
+env_test = "TEST"
 
 
-def select_env():
+def select_env():  # pylint: disable=too-many-return-statements
     if os.getenv("GITHUB_WORKFLOW"):
         return env_ci
+
+    is_test = "test" in sys.argv or (len(sys.argv) > 0 and "pytest" in sys.argv[0])
+    if is_test:
+        return env_test
+
+    is_docker = Path("/dockerized_application.txt").exists()
+    if str(sys.argv[0]).endswith("manage.py") and "runserver" not in sys.argv:
+        if is_docker:
+            return env_cmd_docker
+        return env_cmd
+
     try:
         import local_settings
 
-        return getattr(local_settings, "env", env_dev)
+        env_ = getattr(local_settings, "env", env_dev)
+
+        if is_docker and env_ == env_dev:
+            return env_dev_docker
+
+        return env_
     except ImportError:
         pass
+
+    if is_docker:
+        return env_dev_docker
+
     return env_dev
 
 
 ENV = select_env()
 
+print(f"ENV is : {ENV}")
+
+# pylint: disable=wildcard-import,unused-wildcard-import,cyclic-import
+
 if ENV == env_pro:
     from issuetracker.setting.settings_pro import *
-elif ENV == env_stage:
-    from issuetracker.setting.settings_stage import *
 elif ENV == env_ci:
     from issuetracker.setting.settings_ci import *
+elif ENV == env_cmd:
+    from issuetracker.setting.settings_cmd import *
+elif ENV == env_cmd_docker:
+    from issuetracker.setting.settings_cmd_docker import *
 elif ENV == env_dev:
     from issuetracker.setting.settings_dev import *
+elif ENV == env_dev_docker:
+    from issuetracker.setting.settings_dev_docker import *
+elif ENV == env_test:
+    from issuetracker.setting.settings_test import *
 else:
     raise Exception("env is incorrect!")
 

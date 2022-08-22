@@ -1,3 +1,4 @@
+import logging
 import os
 
 from django.conf import settings
@@ -6,6 +7,10 @@ from django.urls import path, include, re_path
 from django.views.static import serve
 
 from issuetracker.settings import BASE_DIR
+
+logger = logging.getLogger(__name__)
+
+logger.info("System is starting with [env=%s, db=%s]", settings.ENV, settings.DATABASES["default"]["ENGINE"])
 
 urlpatterns = [
     path("admin/", admin.site.urls),
