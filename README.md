@@ -13,6 +13,14 @@
 ```
 Now, you can view the application with this url [http://localhost:8000/](http://localhost:8000/)
 
+credentials1:\
+username: admin\
+password: 123456 
+
+credentials2:\
+username: user\
+password: 123456 
+
 
 ### Rest urls
 * To view all tasks:  [http://localhost:8000/task/api/list/](http://localhost:8000/task/api/list/)
