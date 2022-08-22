@@ -17,13 +17,13 @@ RUN ping 8.8.8.8 -c 1
 RUN ping google.com -c 1
 
 RUN mkdir workspace
-RUN mkdir /workspace/project
+RUN mkdir /workspace/app
 RUN mkdir /workspace/files
 RUN mkdir /workspace/files/static
 RUN mkdir /workspace/files/media
 RUN mkdir /workspace/files/log
 
-WORKDIR /workspace/project
+WORKDIR /workspace/app
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
