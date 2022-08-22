@@ -32,3 +32,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 COPY . .
 
+
+RUN source venv/bin/activate
+RUN python manage.py migrate
+
+
