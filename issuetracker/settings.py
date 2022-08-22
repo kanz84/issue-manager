@@ -29,10 +29,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
-IS_TEST = "test" in sys.argv or (len(sys.argv) > 0 and "pytest" in sys.argv[0])
-
-LOG_FILE_LOCATION = os.path.join(BASE_DIR, "log", "app.log")
-
 APP_NAME = "Issue Tracker"
 
 # Quick-start development settings - unsuitable for production
@@ -172,6 +168,21 @@ REST_FRAMEWORK = {
 }
 
 
+def ensure_get_file(path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    return path
+
+
+LOGGING_CONSOLE_LOG_LEVEL = "DEBUG"
+LOGGING_DB_BACKENDS_SCHEMA_LOG_LEVEL = "DEBUG"
+LOGGING_DB_BACKENDS_LOG_LEVEL = "INFO"
+LOGGING_ENABLE_LOG_FILE_HANDLER = True
+LOGGING_FILE_LOCATION = ensure_get_file(f"{BASE_DIR}/log/app.log")
+
+LOGGING = {"": ""}
+LOGGING_CONFIG = "logger.configure_my_logging"
+
+
 env_pro = "PRO"
 env_ci = "CI"
 env_dev = "DEV"
@@ -241,8 +252,3 @@ try:
     from local_settings import *
 except ImportError:
     pass
-
-
-from logger import LOGGING_CONFIGURATION
-
-LOGGING = LOGGING_CONFIGURATION

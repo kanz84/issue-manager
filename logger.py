@@ -1,30 +1,12 @@
 import logging
 import os
-import sys
 import warnings
-from pathlib import Path
 
 from django.conf import settings
 
-
-def get_log_file_location():
-    log_file = settings.LOG_FILE_LOCATION
-    if not os.path.exists(Path(log_file).resolve().parent):
-        os.makedirs(Path(log_file).resolve().parent)
-    return log_file
-
-
-def is_in_run_mode():
-    is_run_on_apache_ = len(sys.argv) > 0 and sys.argv[0] == "mod_wsgi"
-    is_run_with_runserver = len(sys.argv) > 1 and sys.argv[1] == "runserver"
-    is_run_with_gunicorn = len(sys.argv) > 0 and "gunicorn" in sys.argv[0]
-    return is_run_on_apache_ or is_run_with_runserver or is_run_with_gunicorn
-
-
-is_run_on_apache = len(sys.argv) > 0 and sys.argv[0] == "mod_wsgi"
-
 warnings.simplefilter("default")
 logging.captureWarnings(True)
+
 
 LOGGING_CONFIGURATION = {
     "version": 1,
@@ -32,7 +14,7 @@ LOGGING_CONFIGURATION = {
     "formatters": {
         "verbose": {
             "()": "colorlog.ColoredFormatter",
-            "format": "{log_color}{asctime} [{levelname}] {name}.{funcName}({lineno}) rid({request_id}) "
+            "format": "{log_color}{asctime} [{levelname}] {name}.{funcName}({lineno}) req_id({request_id}) "
             "pid({process:d}) {threadName}({thread:d})[{ip}] - {username} - {message}",
             "style": "{",
         },
@@ -58,7 +40,7 @@ LOGGING_CONFIGURATION = {
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "level": "ERROR" if is_run_on_apache else "DEBUG",
+            "level": settings.LOGGING_CONSOLE_LOG_LEVEL,
             "filters": ["request_filter", "request_id_filter"],
             # 'filters': ['require_debug_true'],
             "formatter": "verbose",
@@ -68,11 +50,11 @@ LOGGING_CONFIGURATION = {
             "level": "DEBUG",
             "filters": ["request_filter", "request_id_filter"],
             "formatter": "verbose",
-            "filename": get_log_file_location(),
+            "filename": settings.LOGGING_FILE_LOCATION,
             "when": "midnight",
-            "backupCount": 90,
+            "backupCount": 36500,
         }
-        if is_in_run_mode()
+        if settings.LOGGING_ENABLE_LOG_FILE_HANDLER
         else {"class": "logging.NullHandler"},
     },
     "root": {
@@ -97,7 +79,7 @@ LOGGING_CONFIGURATION = {
         },
         "django.db.backends": {
             "handlers": ["console", "file"],
-            "level": "INFO",
+            "level": settings.LOGGING_DB_BACKENDS_LOG_LEVEL,
             "propagate": False,
         },
         "apscheduler.scheduler": {
@@ -116,7 +98,7 @@ LOGGING_CONFIGURATION = {
             "propagate": False,
         },
         "django.db.backends.schema": {
-            "level": "INFO" if settings.IS_TEST else "DEBUG",
+            "level": settings.LOGGING_DB_BACKENDS_SCHEMA_LOG_LEVEL,
             "handlers": ["console", "file"],
             "propagate": False,
         },
@@ -130,15 +112,35 @@ LOGGING_CONFIGURATION = {
             "handlers": ["console", "file"],
             "propagate": False,
         },
+        "gunicorn.error": {
+            "level": "DEBUG",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
     },
 }
+
+
+def configure_my_logging(_=None):
+    import logging.config  # pylint: disable=redefined-outer-name
+
+    logging.config.dictConfig(LOGGING_CONFIGURATION)
+
+
+def get_ip_address(request):
+    if not request:
+        return None
+    if not hasattr(request, "META"):
+        return None
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR", None)
+    return x_forwarded_for.split(",")[0] if x_forwarded_for else request.META.get("REMOTE_ADDR", None)
 
 
 class RequestFilter(logging.Filter):
     def filter(self, record):
         user = record.request.user.username if hasattr(record, "request") and hasattr(record.request, "user") else None
         record.username = user if user else "system"
-        ip = self.get_ip_address(record.request) if hasattr(record, "request") else None
+        ip = get_ip_address(record.request) if hasattr(record, "request") else None
         record.ip = ip if ip else "system"
         trace_id = (
             record.request.trace_id
@@ -147,10 +149,3 @@ class RequestFilter(logging.Filter):
         )
         record.trace_id = trace_id
         return True
-
-    @staticmethod
-    def get_ip_address(request):
-        if not hasattr(request, "META"):
-            return None
-        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR", None)
-        return x_forwarded_for.split(",")[0] if x_forwarded_for else request.META.get("REMOTE_ADDR", None)
