@@ -1,13 +1,16 @@
 #!/bin/sh
 
-current_time=$(date "+%Y%m%d_%H%M%S")
-backup_dir=$HOME/backups/issue-manager/backup_$current_time/
+project_name=issue-manager
+echo "$project_name is deploying..."
 
-mkdir -p "$HOME/artifacts/issue-manager/postgres/pgdata"
-mkdir -p "$HOME/artifacts/issue-manager/app_files"
-mkdir -p "$HOME/artifacts/issue-manager/app_files/static"
-mkdir -p "$HOME/artifacts/issue-manager/app_files/media"
-mkdir -p "$HOME/artifacts/issue-manager/nginx/logs"
+current_time=$(date "+%Y%m%d_%H%M%S")
+backup_dir=$HOME/backups/$project_name/backup_$current_time/
+
+mkdir -p "$HOME/artifacts/$project_name/postgres/pgdata"
+mkdir -p "$HOME/artifacts/$project_name/app_files"
+mkdir -p "$HOME/artifacts/$project_name/app_files/static"
+mkdir -p "$HOME/artifacts/$project_name/app_files/media"
+mkdir -p "$HOME/artifacts/$project_name/nginx/logs"
 mkdir -p "$backup_dir"
 
 docker-compose down && docker system prune -f && docker network prune -f
