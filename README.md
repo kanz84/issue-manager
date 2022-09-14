@@ -1,6 +1,7 @@
 ## The <span style="color:red">*Issue Manager*</span> Project
 
 
+
 ### Installation
 ```sh
 	cd project_dir
