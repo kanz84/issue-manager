@@ -1,3 +1,5 @@
+import os
+
 from issuetracker.settings import DATABASES
 
 DEBUG = False
@@ -11,4 +13,11 @@ LOAD_STATICS = False
 
 LOGGING_CONSOLE_LOG_LEVEL = "ERROR"
 LOGGING_ENABLE_LOG_FILE_HANDLER = True
-LOGGING_FILE_LOCATION = "/workspace/files/log/app.log"
+
+
+def ensure_get_file(path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    return path
+
+
+LOGGING_FILE_LOCATION = ensure_get_file("/workspace/files/log/app.log")
